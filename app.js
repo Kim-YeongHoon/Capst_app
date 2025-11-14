@@ -14,12 +14,13 @@ import {
 // 프로젝트 ID: helmet-demo (이미 알고 있는 값)
 // 나머지는 콘솔 → 프로젝트 설정 → 내 앱(firebaseConfig)에서 복붙
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
+  apiKey: "AIzaSyBQ0wEdKnCwzPOWGJa3VAzq6GT_ebJl8ms",
   authDomain: "helmet-demo.firebaseapp.com",
   projectId: "helmet-demo",
-  storageBucket: "helmet-demo.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID",
+  storageBucket: "helmet-demo.firebasestorage.app",
+  messagingSenderId: "1037642230282",
+  appId: "1:1037642230282:web:5f992777cb2ee822e98df3",
+  measurementId: "G-HCQPN61BT5"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -152,3 +153,4 @@ function renderEvents(events) {
 loadSampleEventsBtn.addEventListener("click", () => {
   renderEvents(SAMPLE_EVENTS);
 });
+
