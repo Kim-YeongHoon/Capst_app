@@ -15,7 +15,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyBQ0wEdKnCwzPOWGJa3VAzq6GT_ebJl8ms",
   authDomain: "helmet-demo.firebaseapp.com",
   projectId: "helmet-demo",
-  storageBucket: "helmet-demo.appspot.com",
+  storageBucket: "helmet-demo.appspot.com",   //
   messagingSenderId: "1037642230282",
   appId: "1:1037642230282:web:5f992777cb2ee822e98df3",
   measurementId: "G-HCQPN61BT5"
@@ -169,5 +169,6 @@ loadSampleEventsBtn.addEventListener("click", () => {
   console.log("[helmet-demo] 샘플 이벤트 렌더링");
   renderEvents(SAMPLE_EVENTS);
 });
+
 
 
