@@ -2,15 +2,126 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>안전모 이벤트 데모</title>
+  <title>공사 현장 안전모 이벤트 데모</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 16px;
+      line-height: 1.5;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 0.3rem;
+    }
+
+    h2 {
+      font-size: 1.2rem;
+      margin: 0 0 0.5rem;
+    }
+
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 16px;
+      margin-top: 20px;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    button {
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: none;
+      background-color: #2563eb;
+      color: #fff;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
+
+    #status {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    #previewVideo {
+      width: 100%;
+      max-height: 420px;
+      margin-top: 12px;
+      background: #000;
+    }
+
+    #eventsContainer {
+      margin-top: 10px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .event-item {
+      border: 1px solid #e5e5e5;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 0.9rem;
+      background: #fafafa;
+    }
+
+    .event-header {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.8rem;
+    }
+  </style>
 </head>
 <body>
-  <h1>안전모 이벤트 데모 (Firebase)</h1>
+  <h1>공사 현장 안전모 이벤트 데모</h1>
+  <p style="font-size:0.95rem;">
+    ① CCTV mp4 업로드 → Firebase Storage<br />
+    ② 업로드 완료 후, 아래에서 영상 미리보기<br />
+    ③ (샘플) YOLO 이벤트 JSON을 카드 형태로 시각화
+  </p>
 
-  <button id="testBtn">Firebase 연결 테스트</button>
-  <div id="output"></div>
+  <!-- 1. 영상 업로드 & 미리보기 -->
+  <section class="card">
+    <h2>1. CCTV 영상 업로드</h2>
+    <div class="row">
+      <input id="videoInput" type="file" accept="video/mp4,video/*" />
+      <button id="uploadBtn">Firebase에 업로드</button>
+    </div>
+    <div id="status">현재 상태: 대기 중</div>
 
-  <!-- Firebase 및 앱 스크립트 -->
+    <video id="previewVideo" controls></video>
+  </section>
+
+  <!-- 2. YOLO 이벤트 JSON UI -->
+  <section class="card">
+    <h2>2. 안전모 미착용 이벤트 (샘플 JSON)</h2>
+    <p style="font-size:0.9rem;">
+      나중에는 실제 YOLO 서버에서 받은 JSON을 여기로 연결할 예정이고,<br />
+      지금은 샘플 JSON으로 UI 동작만 먼저 확인하는 단계야.
+    </p>
+    <button id="loadSampleEventsBtn">샘플 이벤트 불러오기</button>
+    <div id="eventsContainer"></div>
+  </section>
+
+  <!-- Firebase & 앱 로직 -->
   <script type="module" src="./app.js"></script>
 </body>
 </html>
