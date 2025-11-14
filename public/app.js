@@ -1,6 +1,6 @@
 // app.js
 
-// 1) Firebase 모듈 import (CDN, ES module)
+// 1) Firebase SDK import (모듈 방식)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
 import {
   getStorage,
@@ -9,24 +9,24 @@ import {
   getDownloadURL,
 } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-storage.js";
 
-// 2) Firebase 초기화 ---------------------------------------
-// ⚠️ 이 부분은 네 Firebase 콘솔에서 받은 값으로 채워 넣기
-// 프로젝트 ID: helmet-demo (이미 알고 있는 값)
-// 나머지는 콘솔 → 프로젝트 설정 → 내 앱(firebaseConfig)에서 복붙
+console.log("[helmet-demo] app.js loaded");
+
+// 2) Firebase 초기화 (본인 config로 교체할 것)
 const firebaseConfig = {
-  apiKey: "AIzaSyBQ0wEdKnCwzPOWGJa3VAzq6GT_ebJl8ms",
+  apiKey: "YOUR_API_KEY",
   authDomain: "helmet-demo.firebaseapp.com",
   projectId: "helmet-demo",
-  storageBucket: "helmet-demo.firebasestorage.app",
-  messagingSenderId: "1037642230282",
-  appId: "1:1037642230282:web:5f992777cb2ee822e98df3",
-  measurementId: "G-HCQPN61BT5"
+  storageBucket: "helmet-demo.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID",
 };
 
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
 
-// 3) DOM 요소 캐싱 -----------------------------------------
+console.log("[helmet-demo] Firebase initialized");
+
+// 3) DOM 요소
 const videoInput = document.getElementById("videoInput");
 const uploadBtn = document.getElementById("uploadBtn");
 const statusEl = document.getElementById("status");
@@ -35,46 +35,65 @@ const previewVideo = document.getElementById("previewVideo");
 const loadSampleEventsBtn = document.getElementById("loadSampleEventsBtn");
 const eventsContainer = document.getElementById("eventsContainer");
 
-// 4) mp4 업로드 → 퍼센트 표시 → getDownloadURL → <video> 재생 -----
+// 방어코드: 요소 못 찾으면 바로 콘솔에 표시
+if (!videoInput || !uploadBtn || !statusEl || !previewVideo) {
+  console.error("[helmet-demo] DOM 요소를 찾지 못했습니다. index.html과 id를 확인하세요.");
+}
 
+// 4) 업로드 로직
 uploadBtn.addEventListener("click", () => {
+  console.log("[helmet-demo] 업로드 버튼 클릭됨");
+
   const file = videoInput.files?.[0];
+  console.log("[helmet-demo] 선택된 파일:", file);
 
   if (!file) {
     alert("먼저 업로드할 영상 파일(mp4)을 선택해 주세요.");
     return;
   }
 
-  // 버튼 잠그고 상태 초기화
   uploadBtn.disabled = true;
   statusEl.textContent = "업로드 시작...";
+  console.log("[helmet-demo] 업로드 시작");
 
-  // Storage 경로: videos/타임스탬프_원본파일명
   const filePath = `videos/${Date.now()}_${file.name}`;
   const storageRef = ref(storage, filePath);
 
   const uploadTask = uploadBytesResumable(storageRef, file);
+  console.log("[helmet-demo] uploadTask 생성됨:", uploadTask);
 
   uploadTask.on(
     "state_changed",
     (snapshot) => {
-      const percent =
-        (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      const rounded = Math.round(percent);
-      statusEl.textContent = `업로드 중... ${rounded}%`;
+      const { bytesTransferred, totalBytes, state } = snapshot;
+      const percent = totalBytes
+        ? Math.round((bytesTransferred / totalBytes) * 100)
+        : 0;
+
+      console.log(
+        "[helmet-demo] state_changed:",
+        "bytesTransferred =", bytesTransferred,
+        "totalBytes =", totalBytes,
+        "state =", state,
+        "percent =", percent
+      );
+
+      statusEl.textContent = `업로드 중... ${percent}%`;
     },
     (error) => {
-      console.error("업로드 오류:", error);
-      statusEl.textContent = "업로드 중 오류 발생. 콘솔을 확인해 주세요.";
+      console.error("[helmet-demo] 업로드 오류:", error.code, error.message);
+      statusEl.textContent = `업로드 중 오류 발생: ${error.code}`;
       uploadBtn.disabled = false;
     },
     async () => {
-      // 업로드 완료
+      console.log("[helmet-demo] 업로드 완료, 다운로드 URL 요청");
+
       try {
         const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+        console.log("[helmet-demo] downloadURL:", downloadURL);
+
         statusEl.textContent = "업로드 완료! 영상 미리보기를 불러옵니다.";
 
-        // <video>에 다운로드 URL 세팅
         previewVideo.src = downloadURL;
         previewVideo.load();
         previewVideo
@@ -83,12 +102,9 @@ uploadBtn.addEventListener("click", () => {
             statusEl.textContent +=
               " (브라우저 자동재생이 막혀 있으면 play 버튼을 눌러주세요)";
           });
-
-        // 여기서 나중에: YOLO 서버에 downloadURL을 보내서 분석 요청 → JSON 수신 → renderEvents 호출
       } catch (e) {
-        console.error("URL 가져오기 오류:", e);
-        statusEl.textContent =
-          "업로드는 완료됐지만, 다운로드 URL을 가져오는데 실패했습니다.";
+        console.error("[helmet-demo] URL 가져오기 오류:", e);
+        statusEl.textContent = "업로드는 완료됐지만, 다운로드 URL을 가져오는데 실패했습니다.";
       } finally {
         uploadBtn.disabled = false;
       }
@@ -96,9 +112,8 @@ uploadBtn.addEventListener("click", () => {
   );
 });
 
-// 5) YOLO 이벤트 JSON 샘플 + 렌더링 ---------------------------
+// 5) 샘플 YOLO 이벤트 JSON
 
-// 나중에 실제 YOLO inference 결과 JSON 구조를 이런 느낌으로 맞추면 됨
 const SAMPLE_EVENTS = [
   {
     id: "evt_001",
@@ -106,7 +121,7 @@ const SAMPLE_EVENTS = [
     frame_index: 69,
     class_name: "no_helmet",
     confidence: 0.93,
-    bbox: [320, 180, 410, 350], // [x1, y1, x2, y2]
+    bbox: [320, 180, 410, 350],
     worker_id: "worker_A",
   },
   {
@@ -121,7 +136,7 @@ const SAMPLE_EVENTS = [
 ];
 
 function renderEvents(events) {
-  eventsContainer.innerHTML = ""; // 초기화
+  eventsContainer.innerHTML = "";
 
   if (!events || events.length === 0) {
     eventsContainer.textContent = "표시할 이벤트가 없습니다.";
@@ -151,6 +166,6 @@ function renderEvents(events) {
 }
 
 loadSampleEventsBtn.addEventListener("click", () => {
+  console.log("[helmet-demo] 샘플 이벤트 렌더링");
   renderEvents(SAMPLE_EVENTS);
 });
-
