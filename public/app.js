@@ -11,14 +11,14 @@ import {
 
 console.log("[helmet-demo] app.js loaded");
 
-// 2) Firebase 초기화 (본인 config로 교체할 것)
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
+  apiKey: "AIzaSyBQ0wEdKnCwzPOWGJa3VAzq6GT_ebJl8ms",
   authDomain: "helmet-demo.firebaseapp.com",
   projectId: "helmet-demo",
-  storageBucket: "helmet-demo.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID",
+  storageBucket: "helmet-demo.firebasestorage.app",
+  messagingSenderId: "1037642230282",
+  appId: "1:1037642230282:web:5f992777cb2ee822e98df3",
+  measurementId: "G-HCQPN61BT5"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -169,3 +169,4 @@ loadSampleEventsBtn.addEventListener("click", () => {
   console.log("[helmet-demo] 샘플 이벤트 렌더링");
   renderEvents(SAMPLE_EVENTS);
 });
+
