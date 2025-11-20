@@ -73,6 +73,15 @@
       font-size: 0.95rem;
     }
 
+    input[type="text"] {
+      font-size: 0.9rem;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      flex: 1;
+      min-width: 220px;
+    }
+
     button {
       padding: 10px 18px;
       border-radius: 8px;
@@ -188,9 +197,25 @@
     <section>
       <h2>2. 안전모 미착용 이벤트 (샘플 JSON)</h2>
       <p class="section-note">
-        아래 버튼을 눌러 샘플 YOLO 이벤트 JSON을 카드 형태로 확인할 수 있습니다.
+        아래 버튼을 눌러 샘플 YOLO 이벤트 JSON을 카드 형태로 확인하거나,<br />
+        모델이 생성한 JSON 파일의 URL을 입력해 실제 분석 결과를 불러올 수 있습니다.
       </p>
-      <button id="loadSampleEventsBtn">샘플 이벤트 불러오기</button>
+
+      <!-- 샘플 이벤트 버튼 -->
+      <div class="controls-row" style="margin-top: 12px;">
+        <button id="loadSampleEventsBtn">샘플 이벤트 불러오기</button>
+      </div>
+
+      <!-- JSON URL 입력 + 불러오기 -->
+      <div class="controls-row">
+        <input
+          id="eventsUrlInput"
+          type="text"
+          placeholder="분석 결과 JSON URL (예: /results/demo1.json 또는 https://.../result.json)"
+        />
+        <button id="loadFromUrlBtn">URL에서 불러오기</button>
+      </div>
+
       <div id="eventsContainer"></div>
     </section>
 
@@ -206,3 +231,4 @@
   <script type="module" src="./app.js"></script>
 </body>
 </html>
+  
